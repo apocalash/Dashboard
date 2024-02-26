@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+        html, body {
+            height: 100%;
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+        }
+
+        body {
+            font-family: Montserrat;
+            background: linear-gradient(135deg, #FFFFFF, #7D93B6);
+            position: relative;
+        }
+ 
+        .container {
+            max-width: 1200px;
+            margin: 10px auto;
+            padding: 20px;
+            justify-content: space-between;
+            
+        }
+ 
+        .application {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+ 
+        .application h3 {
+            margin-top: 0;
+            cursor: pointer; /* Add cursor pointer */
+            color: darkorchid;
+            text-decoration: underline;
+        }
+ 
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); /* Adjusted width */
+            grid-gap: 20px;
+        }
+ 
+        .detail {
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 250px;
+            max-height: 200px;
+        }
+        
+        p {
+            margin-top: 0;
+            font-weight:bold;
+            font-size: 18px;
+        }
+ 
+        .detail pre {
+            margin-bottom: 0;
+            font-family: Montserrat;
+            font-size: 15px;
+        }
+ 
+        .errorMessage {
+            color: red;
+            margin-top: 10px;
+        }
+ 
+        .glass-button {
+            background-color: rgba(255, 255, 255, 0.8); /* Set background color with transparency */
+            border: none;
+            color: rgb(9, 62, 213); /* Set text color */
+            font-family: Montserrat;
+            font-weight: bold;
+            /* text-decoration: underline; */
+            padding: 5px 10px; /* Adjust padding for smaller size */
+            border-radius: 5px; /* Add border-radius for rounded corners */
+            transition: background-color 0.3s; /* Add transition effect */
+        }
+ 
+        .glass-button:hover {
+            background-color: rgba(214, 208, 208, 0.8); /* Change background color on hover */
+        }
+
+        #heading {
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgb(176 196 213 / 20%);
+            backdrop-filter: blur(10px);
+            padding: 2px;
+        }
+
+        #app_button{
+            background-color: rgba(255, 255, 255, 0.8); /* Set background color with transparency */
+            border: none;
+            color: rgb(0,0,0); /* Set text color */
+            font-family: Montserrat;
+            font-weight: bold;
+            /* text-decoration: underline; */
+            padding: 5px 10px; /* Adjust padding for smaller size */
+            border-radius: 5px; /* Add border-radius for rounded corners */
+            transition: background-color 0.3s; /* Add transition effect */
+        }
+
+
+    </style>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+</head>
+ 
+<body ng-app="myApp" ng-controller="myController" class="container">
+<div id = "full-body">
+    <div id = "heading">
+        <h1 style="margin-bottom: 0px; font-weight: bolder;">DASHBOARD</h1>
+    </div>
+    
+    <div class="mt-5">
+        <button class="mt-4" ng-click="toggleAddApplication()" id="app_button">Add application
+            <span><img style="margin-left: 0px; height: 30px" src="https://cdn-icons-png.flaticon.com/128/2985/2985150.png"></span>
+        </button>
+    </div>
+    
+    <div ng-show="showAddApplication">
+        <form ng-submit="saveApplication()" class="mt-3">
+            <div class="form-group">
+                <label for="appName">Application Name:</label>
+                <input type="text" id="appName" ng-model="application.appName" class="form-control" required>
+            </div>
+         
+            <div class="form-group">
+                <label for="appUrl">Application URL:</label>
+                <input type="text" id="appUrl" ng-model="application.appUrl" class="form-control" required ng-pattern="/^(localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(:\d+)?$/">
+            </div>
+         
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+     
+    <h3 class="mt-5">Application Details</h3>
+    <div class="applications mt-3">
+        <div class="application" ng-repeat="app in applications">
+            <h3>
+                {{ app.appName }}</h3>
+            <div class="details-grid" ng-if="app.dashboardContent">
+                <div class="detail" ng-repeat="key in keyOrder" ng-if="app.dashboardContent[key]">
+                    <p>{{ key }}</p>
+                    <pre>{{ formatResponse(app.dashboardContent[key]) }}</pre>
+                </div>
+               
+                <div class="mem_card" ng-show="app.started">
+                    <button class="glass-button" ng-disabled="!app.started" ng-click="downloadMemoryDump(app.dashboardContent[key])">
+                        Download Memory Dump
+                    </button>
+                   
+                    <div class="errorMessage"></div>
+                </div>
+            </div>
+            <div class="errorMessage" ng-if="app.error">{{ app.error }}</div>
+        </div>
+    </div>
+     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
+    <script>
+        angular.module('myApp', [])
+            .controller('myController', function($scope, $http, $interval) {
+                $scope.applications = [];
+                $scope.application = {};
+                $scope.keyOrder = [
+                    'app-name',
+                    'health-status',
+                    'backend',
+                    'system-info',
+                    'up-time',
+                    'database-info',
+                    'memory-usage',
+                    'java-version',
+                    'process-id',
+                    'port-info'
+                ];
+     
+                $scope.showAddApplication = false;
+    
+                $scope.toggleAddApplication = function() {
+                    $scope.showAddApplication = !$scope.showAddApplication;
+                };
+    
+                $scope.saveApplication = function() {
+                   $scope.application.fullUrl = 'http://' + $scope.application.appUrl + '/actuator/';
+                   $scope.applications.push($scope.application);
+                   $scope.startRefreshingDashboardContent($scope.application);
+                   $scope.loadDashboardContent($scope.application);
+                   $scope.application = {};
+                   $scope.showAddApplication = false; // Hide the form after submission
+                };
+     
+                $scope.startRefreshingDashboardContent = function(application) {
+                   $interval(function() {
+                      $scope.loadDashboardContent(application);
+                   }, 5000); // Update every 5 seconds
+                };
+                $scope.loadDashboardContent = function(application) {
+                   application.dashboardContent = {};
+                   application.error = "Error: Application needs to be started / Please Check the port number."; // Set error message initially
+                   application.started = false; // Set started to false initially
+     
+                   var promises = [];
+     
+                   angular.forEach($scope.keyOrder, function(endpoint) {
+                     var url = application.fullUrl + endpoint;
+                     var promise = $http.get(url)
+                      .then(function(response) {
+                         application.dashboardContent[endpoint] = response.data;
+                         application.error = ""; // Clear error message if data is retrieved
+                         application.started = true; // Set application as started
+                       })
+                      .catch(function(error) {
+                         console.error('Error fetching endpoint data:', error);
+                    });
+                   promises.push(promise);
+                   });
+     
+                  Promise.all(promises)
+                  .then(function() {
+                     var memCardElements = document.getElementsByClassName('mem_card');
+                     var memCardElement = memCardElements[memCardElements.length - 1]; // Get the last mem_card element for the current application
+     
+                     if (application.started) {
+                    // Show the download button for this application
+                       memCardElement.style.display = 'block';
+                     } else {
+                    // Hide the download button for this application
+                        memCardElement.style.display = 'none';
+                    }
+                 });
+                };
+     
+                $scope.formatResponse = function(response) {
+                    if (typeof response === 'object') {
+                        return JSON.stringify(response, null, 2)
+                            .replace(/[{}"]/g, '').trim();
+                    } else {
+                        return response;
+                    }
+                };
+     
+                // Function to download the memory dump
+                $scope.downloadMemoryDump = function() {
+                    $http.get($scope.applications[0].fullUrl + 'custom-memory-dump', { responseType: 'blob' })
+                        .then(function(response) {
+                            var blob = new Blob([response.data]);
+                            var link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(blob);
+                            link.download = 'memory_dump.hprof';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        })
+                        .catch(function(error) {
+                            var errorElement = document.getElementsByClassName('errorMessage');
+                            if (errorElement && errorElement.length > 0) {
+                                errorElement[0].textContent = 'Error: ' + error.data;
+                            }
+                        });
+                };
+     
+            });
+    </script>
+</div>
+</body>
+</html>
