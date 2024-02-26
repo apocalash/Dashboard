@@ -13,7 +13,7 @@
             margin: 0; /* Remove default margin */
             padding: 0; /* Remove default padding */
         }
-
+       
         body {
             font-family: Montserrat;
             background: linear-gradient(135deg, #FFFFFF, #7D93B6);
@@ -25,24 +25,25 @@
             margin: 10px auto;
             padding: 20px;
             justify-content: space-between;
-            
+           
         }
  
         .application {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
  
-        .application h3 {
-            margin-top: 0;
-            cursor: pointer; /* Add cursor pointer */
-            color: darkorchid;
-            text-decoration: underline;
-        }
+.application h3 {
+    margin-top: 0;
+    cursor: pointer;
+    color: rgb(4, 1, 5);
+    /* text-decoration: underline; Remove underline */
+}
+ 
  
         .details-grid {
             display: grid;
@@ -58,7 +59,7 @@
             max-width: 250px;
             max-height: 200px;
         }
-        
+       
         p {
             margin-top: 0;
             font-weight:bold;
@@ -91,7 +92,7 @@
         .glass-button:hover {
             background-color: rgba(214, 208, 208, 0.8); /* Change background color on hover */
         }
-
+ 
         #heading {
             text-align: center;
             position: fixed;
@@ -108,7 +109,7 @@
             backdrop-filter: blur(10px);
             padding: 2px;
         }
-
+ 
         #app_button{
             background-color: rgba(255, 255, 255, 0.8); /* Set background color with transparency */
             border: none;
@@ -120,8 +121,8 @@
             border-radius: 5px; /* Add border-radius for rounded corners */
             transition: background-color 0.3s; /* Add transition effect */
         }
-
-
+ 
+ 
     </style>
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 </head>
@@ -131,13 +132,13 @@
     <div id = "heading">
         <h1 style="margin-bottom: 0px; font-weight: bolder;">DASHBOARD</h1>
     </div>
-    
+   
     <div class="mt-5">
         <button class="mt-4" ng-click="toggleAddApplication()" id="app_button">Add application
             <span><img style="margin-left: 0px; height: 30px" src="https://cdn-icons-png.flaticon.com/128/2985/2985150.png"></span>
         </button>
     </div>
-    
+   
     <div ng-show="showAddApplication">
         <form ng-submit="saveApplication()" class="mt-3">
             <div class="form-group">
@@ -197,11 +198,11 @@
                 ];
      
                 $scope.showAddApplication = false;
-    
+   
                 $scope.toggleAddApplication = function() {
                     $scope.showAddApplication = !$scope.showAddApplication;
                 };
-    
+   
                 $scope.saveApplication = function() {
                    $scope.application.fullUrl = 'http://' + $scope.application.appUrl + '/actuator/';
                    $scope.applications.push($scope.application);
